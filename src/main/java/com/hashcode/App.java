@@ -7,6 +7,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class App {
     public static void main(String[] args) {
@@ -96,5 +98,14 @@ public class App {
         // list of books
 
         List<Library> libraries;
+
+        void printResults() {
+            System.out.println(libraries.size());
+
+            libraries.forEach(library -> {
+                System.out.println(library.id + " " + library.books.length);
+                System.out.println(Stream.of(library.books).sorted( ).map( String::valueOf ).collect( Collectors.joining( " " ) ));
+            });
+        }
     }
 }
