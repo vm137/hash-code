@@ -88,4 +88,13 @@ public class App {
 
         int[] books;
     }
+
+    static class OutData {
+        // output format:
+        // number of libraries
+        // libId, number of books for scanning
+        // list of books
+
+        List<Library> libraries;
+    }
 }
