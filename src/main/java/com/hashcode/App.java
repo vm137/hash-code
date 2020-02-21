@@ -94,6 +94,7 @@ public class App {
     static class OutData {
         // output format:
         // number of libraries
+        // next goes blocks of libraries:
         // libId, number of books for scanning
         // list of books
 
@@ -104,7 +105,7 @@ public class App {
 
             libraries.forEach(library -> {
                 System.out.println(library.id + " " + library.books.length);
-                System.out.println(Stream.of(library.books).sorted( ).map( String::valueOf ).collect( Collectors.joining( " " ) ));
+                System.out.println(Stream.of(library.books).map( String::valueOf ).collect( Collectors.joining( " " ) ));
             });
         }
     }
