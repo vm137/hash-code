@@ -27,12 +27,10 @@ public class App {
     static InData getData(String filename) {
         InData inData = new InData();
 
-        try {
-            BufferedReader reader;
+        Path resourceDirectory = Paths.get("src","main", "resources");
+        String absolutePath = resourceDirectory.toFile().getAbsolutePath();
 
-            Path resourceDirectory = Paths.get("src","main", "resources");
-            String absolutePath = resourceDirectory.toFile().getAbsolutePath();
-            reader = new BufferedReader(new FileReader(absolutePath + "/" + filename));
+        try (BufferedReader reader = new BufferedReader(new FileReader(absolutePath + "/" + filename))) {
 
             String line1 = reader.readLine().trim();
             int[] numbers1 = Arrays.stream(line1.split("\\s")).mapToInt(Integer::parseInt).toArray();
@@ -61,8 +59,6 @@ public class App {
 
                 inData.libraries.add(library);
             }
-
-            reader.close();
 
             return inData;
 
