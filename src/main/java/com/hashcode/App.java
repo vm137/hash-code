@@ -48,14 +48,14 @@ public class App {
                 Library library = new Library();
                 library.id = i;
 
-                String lineDescr = reader.readLine().trim();
-                int[] nDescr = Arrays.stream(lineDescr.split("\\s")).mapToInt(Integer::parseInt).toArray();
-                library.n = nDescr[0];
-                library.t = nDescr[1];
-                library.m = nDescr[2];
+                String descrLine = reader.readLine().trim();
+                int[] descrNumbers = Arrays.stream(descrLine.split("\\s")).mapToInt(Integer::parseInt).toArray();
+                library.n = descrNumbers[0];
+                library.t = descrNumbers[1];
+                library.m = descrNumbers[2];
 
-                String lineBooks = reader.readLine().trim();
-                library.books = Arrays.stream(lineBooks.split("\\s")).mapToInt(Integer::parseInt).toArray();
+                String booksLine = reader.readLine().trim();
+                library.books = Arrays.stream(booksLine.split("\\s")).mapToInt(Integer::parseInt).toArray();
 
                 inData.libraries.add(library);
             }
