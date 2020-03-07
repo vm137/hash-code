@@ -12,8 +12,10 @@ import java.util.stream.Stream;
 
 public class App {
     public static void main(String[] args) {
-        List<String> dataSets = Arrays.asList("a_example.txt", "c_incunabula.txt", "b_read_on.txt",
-                "d_tough_choices.txt", "e_so_many_books.txt", "f_libraries_of_the_world.txt");
+        List<String> dataSets = Arrays.asList("a_example.txt"
+//                "c_incunabula.txt", "b_read_on.txt",
+//                "d_tough_choices.txt", "e_so_many_books.txt", "f_libraries_of_the_world.txt"
+        );
 
         List<InData> inData = new ArrayList<>();
 
@@ -24,6 +26,16 @@ public class App {
         });
 
         System.out.println(inData);
+    }
+
+    static void solution(InData inData) {
+        List<Integer> power = new ArrayList<>();
+
+        inData.libraries.forEach(library -> {
+
+        });
+
+
     }
 
     static InData getData(String filename) {
@@ -57,7 +69,33 @@ public class App {
                 library.m = descrNumbers[2];
 
                 String booksLine = reader.readLine().trim();
-                library.books = Arrays.stream(booksLine.split("\\s")).mapToInt(Integer::parseInt).toArray();
+                library.booksIds = Arrays.stream(booksLine.split("\\s")).mapToInt(Integer::parseInt).toArray();
+
+                library.books = new ArrayList<>();
+                for (int j = 0; j < library.n; j++) {
+                    Book newBook = new Book(library.booksIds[j], inData.scores[library.booksIds[j]]);
+                    library.books.add(newBook);
+                }
+
+                // shell sort books[] desc by highest score
+                for (int ii = 0; ii < library.books.size() - 1; ii++) {
+
+                    int maxScore = library.books.get(ii).score;
+                    for (int jj = library.books.size() - 2; jj >= ii; jj--) {
+
+                        if (library.books.get(jj).score > library.books.get(jj + 1).score) {
+                            maxScore = library.books.get(jj).score;
+
+                            // swap
+                            int tempId = library.books.get(jj).id;
+                            int tempScore = library.books.get(jj).score;
+                            library.books.get(jj).id = library.books.get(jj + 1).id;
+                            library.books.get(jj).score = library.books.get(jj + 1).score;
+                            library.books.get(jj + 1).id = tempId;
+                            library.books.get(jj + 1).score = tempScore;
+                        }
+                    }
+                }
 
                 inData.libraries.add(library);
             }
@@ -78,7 +116,6 @@ public class App {
         int d; // number of days
 
         int[] scores; // scores of individual books
-
         List<Library> libraries;
     }
 
@@ -88,7 +125,18 @@ public class App {
         int t; // signup days
         int m; // number of books that can be scanned per day
 
-        int[] books;
+        int[] booksIds;
+        List<Book> books;
+    }
+
+    static class Book {
+        int id;
+        int score;
+
+        Book(int id, int score) {
+            this.id = id;
+            this.score = score;
+        }
     }
 
     static class OutData {
@@ -104,8 +152,8 @@ public class App {
             System.out.println(libraries.size());
 
             libraries.forEach(library -> {
-                System.out.println(library.id + " " + library.books.length);
-                System.out.println(Stream.of(library.books).map( String::valueOf ).collect( Collectors.joining( " " ) ));
+                System.out.println(library.id + " " + library.booksIds.length);
+                System.out.println(Stream.of(library.booksIds).map( String::valueOf ).collect( Collectors.joining( " " ) ));
             });
         }
     }
