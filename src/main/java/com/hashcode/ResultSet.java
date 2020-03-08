@@ -1,11 +1,14 @@
 package com.hashcode;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * output format:
@@ -32,67 +35,80 @@ class ResultSet {
         }
     }
 
+    /**
+     * Solution
+     */
     static ResultSet findSolution(DataSet dataSet) {
         ResultSet resultSet = new ResultSet();
-
         int daysLeft = dataSet.d;
-        int libsLeft = dataSet.libraries.size();
 
-        while (daysLeft > 0 && libsLeft > 0) {
+        while (dataSet.libraries.size() > 0 && daysLeft > 0) {
 
-            Integer[] powerOfLibrary = new Integer[libsLeft];
-            for (int i = 0; i < libsLeft; i++) {
-                Library lib = dataSet.libraries.get(i);
-                int daysLeftForScanning = daysLeft - lib.t;
+            int bestLibId = findBestLib(dataSet.libraries);
 
-                int power = 0;
-                for (int day = 0; day < daysLeftForScanning; day++) {
-                    for (int k = 0; k < lib.m; k++) {
-                        int index = k * lib.m + k;
-                        if (index < lib.n) {
-                            power += lib.books.get(index).score;
-                        }
-                    }
-                }
-                powerOfLibrary[i] = power;
+            OutLibrary outLibrary = new OutLibrary();
+
+            Library lib = dataSet.libraries.get(bestLibId);
+            outLibrary.id = lib.id;
+
+            // add books
+            for (int dayBook = 0; dayBook < lib.books.size() && dayBook <= daysLeft * lib.t; dayBook++) {
+                Book book = lib.books.get(dayBook);
+                outLibrary.bookIds.add(book.id);
             }
 
-            // get lib with max power
-            List<Integer> powerList = Arrays.asList(powerOfLibrary);
-            int goodLibId = powerList.indexOf(Collections.max(powerList));
-            Library goodLib = dataSet.libraries.get(goodLibId);
+            resultSet.libraries.add(outLibrary);
 
-            // make out data
-            OutLibrary newOutLib = new OutLibrary();
-
-            newOutLib.id = goodLib.id;
-
-            int daysForScanning = daysLeft - goodLib.t;
-            for (int i = 0; i < daysForScanning; i++) {
-                for (int j = 0; j < goodLib.m; j++) {
-                    int index = i * goodLib.m + j;
-                    if (index < goodLib.n) {
-                        newOutLib.bookIds.add(goodLib.books.get(index).id);
-                    }
-                }
-            }
-
-            resultSet.libraries.add(newOutLib);
-
-            daysLeft -= goodLib.t;
-            dataSet.libraries.remove(goodLibId);
-            libsLeft--;
+            daysLeft -= lib.t;
+            dataSet.libraries.remove(bestLibId);
         }
 
         return resultSet;
     }
 
-    void printResults() {
+    static int findBestLib(List<Library> libraries) {
+        long[] libPower = new long[libraries.size()];
+
+
+
+        return libraries.get(0).id;
+    }
+
+    void printToConsole() {
         System.out.println(libraries.size());
 
         libraries.forEach(library -> {
             System.out.println(library.id + " " + library.bookIds.size());
-            System.out.println(Stream.of(library.bookIds).map( String::valueOf ).collect( Collectors.joining( " " ) ));
+            System.out.println(library.bookIds.stream().map(String::valueOf).collect(Collectors.joining(" ")));
         });
+    }
+
+    void printToFile(String filename) {
+        boolean out = new File("out").mkdir();
+        String outFilename = "out/" + filename.replaceFirst("[.][^.]+$", "") + ".out";
+
+        new File(outFilename).delete();
+
+        try (
+                FileWriter fileWriter = new FileWriter(outFilename, true);
+                BufferedWriter writer = new BufferedWriter(fileWriter);
+        ) {
+            writer.write(String.valueOf(libraries.size()));
+            writer.append("\n");
+
+            libraries.forEach(library -> {
+                try {
+                    writer.append(String.valueOf(library.id)).append(" ").append(String.valueOf(library.bookIds.size()));
+                    writer.append("\n");
+                    writer.append(library.bookIds.stream().map(String::valueOf).collect(Collectors.joining(" ")));
+                    writer.append("\n");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
