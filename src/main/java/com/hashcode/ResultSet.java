@@ -44,7 +44,7 @@ class ResultSet {
 
         while (dataSet.libraries.size() > 0 && daysLeft > 0) {
 
-            int bestLibId = findBestLib(dataSet.libraries);
+            int bestLibId = findBestLib(dataSet.libraries, daysLeft);
 
             OutLibrary outLibrary = new OutLibrary();
 
@@ -66,12 +66,26 @@ class ResultSet {
         return resultSet;
     }
 
-    static int findBestLib(List<Library> libraries) {
-        long[] libPower = new long[libraries.size()];
+    static int findBestLib(List<Library> libraries, int daysLeft) {
+        Long[] libPower = new Long[libraries.size()];
 
+        for (int i = 0; i < libraries.size(); i++) {
+            Library lib = libraries.get(i);
+            int daysToScan = daysLeft - lib.t;
 
+            long power = 0;
+            for (int dayBook = 0; dayBook < daysToScan * lib.m && dayBook < lib.n; dayBook++) {
+                power += lib.books.get(dayBook).score;
+            }
 
-        return libraries.get(0).id;
+            libPower[i] = power;
+        }
+
+        // get lib with max power
+        List<Long> powerList = Arrays.asList(libPower);
+        int goodLibId = powerList.indexOf(Collections.max(powerList));
+
+        return goodLibId;
     }
 
     void printToConsole() {
