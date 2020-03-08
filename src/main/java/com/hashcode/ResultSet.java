@@ -57,15 +57,37 @@ class ResultSet {
                 outLibrary.bookIds.add(book.id);
             }
 
-            resultSet.libraries.add(outLibrary);
+            if (outLibrary.bookIds.size() > 0) {
+                resultSet.libraries.add(outLibrary);
+            }
 
             daysLeft -= lib.t;
             dataSet.libraries.remove(bestLibId);
+
+            removeDuplicates(outLibrary, dataSet.libraries);
         }
 
         return resultSet;
     }
 
+    static void removeDuplicates(OutLibrary outLibrary, List<Library> libraries) {
+        List<Integer> bookIdsToRemove = outLibrary.bookIds;
+
+        for (Library lib : libraries) {
+            List<Book> books = lib.books;
+
+            for (int id : bookIdsToRemove) {
+                int k = 0;
+                while (k < books.size()) {
+                    if (id == books.get(k).id) {
+                        books.remove(k);
+                    }
+                    k++;
+                }
+            }
+        }
+    }
+    
     static int findBestLib(List<Library> libraries, int daysLeft) {
         Long[] libPower = new Long[libraries.size()];
 
@@ -74,7 +96,7 @@ class ResultSet {
             int daysToScan = daysLeft - lib.t;
 
             long power = 0;
-            for (int dayBook = 0; dayBook < daysToScan * lib.m && dayBook < lib.n; dayBook++) {
+            for (int dayBook = 0; dayBook < daysToScan * lib.m && dayBook < lib.books.size(); dayBook++) {
                 power += lib.books.get(dayBook).score;
             }
 

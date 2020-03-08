@@ -17,6 +17,7 @@ public class App {
         fileNames.forEach(filename -> {
             DataSet dataSet = DataSet.readData(filename);
 
+            assert dataSet != null;
             ResultSet resultSet = ResultSet.findSolution(dataSet);
 
 //            resultSet.printToConsole();
