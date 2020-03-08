@@ -56,16 +56,12 @@ class DataSet {
                     library.books.add(newBook);
                 }
 
-                // shell sort books[] desc by highest score
-                for (int ii = 0; ii < library.books.size() - 1; ii++) {
+                // shell sort List<Book> library.books desc by score
+                int num = library.books.size();
 
-                    int maxScore = library.books.get(ii).score;
-                    for (int jj = library.books.size() - 2; jj >= ii; jj--) {
-
-                        if (library.books.get(jj).score > library.books.get(jj + 1).score) {
-                            maxScore = library.books.get(jj).score;
-
-                            // swap
+                for (int ii = 0; ii < ( num - 1 ); ii++) {
+                    for (int jj = 0; jj < num - ii - 1; jj++) {
+                        if (library.books.get(jj).score < library.books.get(jj + 1).score) {
                             int tempId = library.books.get(jj).id;
                             int tempScore = library.books.get(jj).score;
                             library.books.get(jj).id = library.books.get(jj + 1).id;
@@ -75,7 +71,6 @@ class DataSet {
                         }
                     }
                 }
-
                 dataSet.libraries.add(library);
             }
 
